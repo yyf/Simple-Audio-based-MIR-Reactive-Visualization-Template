@@ -52,9 +52,6 @@ void custom_init();
 void custom_reshape(int, int);
 void custom_display();
 void draw_waveform();
-void draw_rms_waveform();
-void draw_energy_waveform();
-void draw_power_waveform();
 void runOnce();
 void runEverytime();
 
