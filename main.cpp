@@ -23,8 +23,8 @@
 // -------------------------------------------- portaudio setup --------------------------------------------
 
 #define SAMPLE_RATE  (44100)
-#define FRAMES_PER_BUFFER (256)
-#define BUFFER_SIZE 256
+#define FRAMES_PER_BUFFER (512)
+#define BUFFER_SIZE 512
 
 int numBytes;
 float radius_rms = 0.0f, radius_energy = 0.0f, radius_power = 0.0f, global_scaling = 100.0f;
@@ -258,7 +258,7 @@ void runEverytime()
 
 void runOnce()
 {
-    audioAnalyzer.setup(512, 44100);
+    audioAnalyzer.setup(BUFFER_SIZE, SAMPLE_RATE);
     
     for(int i = 0; i < BUFFER_SIZE; i++) {
         sampleBlock[i]= 0.0;
