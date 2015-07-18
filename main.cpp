@@ -150,7 +150,6 @@ void draw_waveform(){
         glEnd();
     glPopMatrix();
 }
-// -------------------------------------------- simple openGL setup ends --------------------------------------------
 
 void glutKeyboard(unsigned char key, int x, int y)
 {
@@ -194,6 +193,8 @@ int custom_window()
     
     return EXIT_SUCCESS;
 }
+
+// -------------------------------------------- simple openGL setup ends --------------------------------------------
 
 int main(int argc, char** argv)
 {
