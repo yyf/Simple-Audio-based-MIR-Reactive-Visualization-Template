@@ -52,8 +52,7 @@ void custom_init();
 void custom_reshape(int, int);
 void custom_display();
 void draw_waveform();
-void runOnce();
-void runEverytime();
+void init_function();
 
 void custom_init()
 {
@@ -170,7 +169,16 @@ void glutIdle()
 {
     if (animate)
     {
-        runEverytime();
+        Pa_ReadStream( stream, sampleBlock, FRAMES_PER_BUFFER );
+        for (int i = 0; i < FRAMES_PER_BUFFER; i++){
+            buffer_to_analyze[i]	= sampleBlock[i];
+        }
+        audioAnalyzer.analyze(buffer_to_analyze, BUFFER_SIZE);
+        // printf("read analyzed result: %f \n", audioAnalyzer.getRms());
+        
+        radius_rms =    0.2*global_scaling*audioAnalyzer.getRms();
+        radius_energy = 0.2*global_scaling*audioAnalyzer.getEnergy();
+        radius_power =  3.0*global_scaling*audioAnalyzer.getPower();
     }
     glutPostRedisplay();
 }
@@ -228,7 +236,7 @@ int main(int argc, char** argv)
 
     // -------------------------------------------- Simple OpenGL setup --------------------------------------------
     
-    runOnce();
+    init_function();
     glutInit(&argc, argv);
     custom_window();
     
@@ -237,23 +245,7 @@ int main(int argc, char** argv)
     return 0;
 }
 
-void runEverytime()
-{
-    
-    Pa_ReadStream( stream, sampleBlock, FRAMES_PER_BUFFER );
-    for (int i = 0; i < FRAMES_PER_BUFFER; i++){
-        buffer_to_analyze[i]	= sampleBlock[i];
-    }
-    audioAnalyzer.analyze(buffer_to_analyze, BUFFER_SIZE);
-    // printf("read analyzed result: %f \n", audioAnalyzer.getRms());
-    
-    radius_rms =    0.2*global_scaling*audioAnalyzer.getRms();
-    radius_energy = 0.2*global_scaling*audioAnalyzer.getEnergy();
-    radius_power =  3.0*global_scaling*audioAnalyzer.getPower();    
-    
-}
-
-void runOnce()
+void init_function()
 {
     audioAnalyzer.setup(BUFFER_SIZE, SAMPLE_RATE);
     
