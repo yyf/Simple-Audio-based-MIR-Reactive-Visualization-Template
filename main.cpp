@@ -27,11 +27,11 @@
 #define BUFFER_SIZE 512
 
 int numBytes;
-float radius_rms = 0.0f, radius_energy = 0.0f, radius_power = 0.0f, global_scaling = 100.0f;
+float radius_rms = 0.0f, radius_energy = 0.0f, radius_power = 0.0f, global_scaling = 100.0f, float DEG_IN_RAD = 0.0f;
 const float DEG_2_RAD = M_PI/180;
 float *sampleBlock, *buffer_to_analyze;
 
-PaStreamParameters inputParameters, outputParameters;
+PaStreamParameters inputParameters;
 PaStream *stream = NULL;
 PaError err;
 
@@ -45,9 +45,12 @@ SimpleEssentiaUtil audioAnalyzer;
 #define PI 3.1415926
 #define WIDTH 640
 #define HEIGHT 640
+#define WINDOW_INIT_POSITION_X 100
+#define WINDOW_INIT_POSITION_Y 100
 
 bool animate = true;
 bool fullscreen = false;
+
 void custom_init();
 void custom_reshape(int, int);
 void custom_display();
@@ -56,7 +59,7 @@ void init_function();
 
 void custom_init()
 {
-	glEnable(GL_DEPTH_TEST);
+	//glEnable(GL_DEPTH_TEST);
 	glCullFace(GL_BACK);
 	glEnable(GL_CULL_FACE);
 	glMatrixMode(GL_PROJECTION);
@@ -95,8 +98,10 @@ void custom_display()
         fullscreen = false;
     }
     
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT);// | GL_DEPTH_BUFFER_BIT);
+
 	glPushMatrix();
+
         gluLookAt(0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
     
         draw_waveform();
@@ -107,26 +112,24 @@ void custom_display()
             glBegin(GL_LINE_LOOP);
             for (int i=0; i < 360; i++)
             {
-                float DEG_IN_RAD = i*DEG_2_RAD;
-                glVertex3f(radius_rms*cos(DEG_IN_RAD), radius_rms*sin(DEG_IN_RAD), 0);
+                DEG_IN_RAD = i*DEG_2_RAD;
+                glVertex3f(radius_rms*cos(DEG_IN_RAD), radius_rms*sin(DEG_IN_RAD), 0.0);
             }
             glEnd();
     
             glColor4f(0.3, 0.89, 0.3, 0.5);
             glBegin(GL_LINE_LOOP);
             for (int i=0; i < 360; i++)
-            {
-                float DEG_IN_RAD = i*DEG_2_RAD;
-                glVertex3f(radius_energy*cos(DEG_IN_RAD), radius_energy*sin(DEG_IN_RAD), 0);
+            {                
+                glVertex3f(radius_energy*cos(DEG_IN_RAD), radius_energy*sin(DEG_IN_RAD), 0.0);
             }
             glEnd();
     
             glColor4f(0.89, 0.3, 0.3, 0.5);
             glBegin(GL_LINE_LOOP);
             for (int i=0; i < 360; i++)
-            {
-                float DEG_IN_RAD = i*DEG_2_RAD;
-                glVertex3f(radius_power*cos(DEG_IN_RAD), radius_power*sin(DEG_IN_RAD), 0);
+            {                
+                glVertex3f(radius_power*cos(DEG_IN_RAD), radius_power*sin(DEG_IN_RAD), 0.0);
             }
             glEnd();
         glPopMatrix();
@@ -141,7 +144,7 @@ void draw_waveform(){
         glColor4f(0.9, 0.9, 0.9, 0.5);
         glBegin(GL_LINE_STRIP);
             for (int i = 0; i < FRAMES_PER_BUFFER; i++){
-                glVertex3f(i/(FRAMES_PER_BUFFER/2.0), buffer_to_analyze[i] , 0);
+                glVertex3f(i/(FRAMES_PER_BUFFER/2.0), buffer_to_analyze[i] , 0.0);
             }
         glEnd();
     glPopMatrix();
@@ -185,9 +188,9 @@ void glutIdle()
 
 int custom_window()
 {
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA); // | GLUT_DEPTH);
 	glutInitWindowSize(WIDTH, HEIGHT);
-	glutInitWindowPosition(100, 100);
+	glutInitWindowPosition(WINDOW_INIT_POSITION_X, WINDOW_INIT_POSITION_Y);
 	glutCreateWindow("Simple Audio Based MIR Visualization Template");
 	custom_init();
     glutIdleFunc(&glutIdle);
